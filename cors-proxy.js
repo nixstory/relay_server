@@ -5,8 +5,8 @@ var express = require('express'),
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-// var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';
-// console.log('Using limit: ', myLimit);
+var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';
+console.log('Using limit: ', myLimit);
 
 app.use(bodyParser.json({ limit: myLimit }));
 
