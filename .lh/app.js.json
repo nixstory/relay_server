@@ -1,0 +1,18 @@
+{
+    "sourceFile": "app.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1649995734258,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1649995734258,
+            "name": "Commit-0",
+            "content": "var express = require('express'),\n    request = require('request'),\n    bodyParser = require('body-parser'),\n    app = express();\n\nvar myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\nconsole.log('Using limit: ', myLimit);\n\napp.use(bodyParser.json({ limit: myLimit }));\n\napp.all('*', function (req, res, next) {\n\n    // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n    res.header(\"Access-Control-Allow-Origin\", \"*\");\n    res.header(\"Access-Control-Allow-Methods\", \"GET, PUT, PATCH, POST, DELETE\");\n    res.header(\"Access-Control-Allow-Headers\", req.header('access-control-request-headers'));\n\n    if (req.method === 'OPTIONS') {\n        // CORS Preflight\n        res.send();\n    } else {\n        var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n        if (!targetURL) {\n            res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n            return;\n        }\n        request({ url: targetURL + req.url, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') } },\n            function (error, response, body) {\n                if (error) {\n                    console.error('error: ' + response.statusCode)\n                }\n                //                console.log(body);\n            }).pipe(res);\n    }\n});\n\napp.set('port', process.env.PORT || 3000);\n\napp.listen(app.get('port'), function () {\n    console.log('Proxy server listening on port ' + app.get('port'));\n});"
+        }
+    ]
+}
