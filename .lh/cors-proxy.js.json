@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 55,
+            "activePatchIndex": 182,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -228,6 +228,514 @@
                 {
                     "date": 1650013942995,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,9 +41,9 @@\n             }).pipe(res);\n     }\n });\n \n-app.set('port', process.env.PORT || 3000);\n+app.set('port', process.env.PORT || 4000);\n \n app.listen(app.get('port'), function () {\n     console.log('Proxy server listening on port ' + app.get('port'));\n });\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1650502875829,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,8 @@\n var express = require('express'),\n     request = require('request'),\n-    bodyParser = require('body-parser'),\n+    session = require('express-session')\n+bodyParser = require('body-parser'),\n     app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n"
+                },
+                {
+                    "date": 1650502903033,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,16 +1,16 @@\n var express = require('express'),\n     request = require('request'),\n-    session = require('express-session')\n-bodyParser = require('body-parser'),\n+    session = require('express-session'),\n+    bodyParser = require('body-parser'),\n     app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n console.log('Using limit: ', myLimit);\n \n-app.use(bodyParser.json({ limit: myLimit }));\n+app.use(session(bodyParser.json({ limit: myLimit })));\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650502966109,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,9 @@\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n console.log('Using limit: ', myLimit);\n \n-app.use(session(bodyParser.json({ limit: myLimit })));\n+app.use(session({ bodyParser.json({ limit: myLimit }) }));\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650503006932,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,9 @@\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n console.log('Using limit: ', myLimit);\n \n-app.use(session({ bodyParser.json({ limit: myLimit }) }));\n+app.use(session({ bodyParser.json({ limit: myLimit }), secret: 'keyboard cat' }));\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650503013673,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,9 @@\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n console.log('Using limit: ', myLimit);\n \n-app.use(session({ bodyParser.json({ limit: myLimit }), secret: 'keyboard cat' }));\n+app.use(session({ secret: 'keyboard cat' }));\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650503050990,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,9 @@\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n console.log('Using limit: ', myLimit);\n \n-app.use(session({ secret: 'keyboard cat' }));\n+app.use(bodyParser.json({ limit: myLimit }));\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650503150423,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,20 @@\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n console.log('Using limit: ', myLimit);\n \n-app.use(bodyParser.json({ limit: myLimit }));\n+// app.use(bodyParser.json({ limit: myLimit }));\n+app.use(session({\n+    httpOnly: true,\t//자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함\n+    secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n+    secret: 'secret key',\t//암호화하는 데 쓰일 키\n+    resave: false,\t//세션을 언제나 저장할지 설정함\n+    saveUninitialized: true,\t//세션이 저장되기 전 uninitialized 상태로 미리 만들어 저장\n+    cookie: {\t//세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)\n+        httpOnly: true,\n+        Secure: true\n+    }\n+}));\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650503172426,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,9 +11,9 @@\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(session({\n     httpOnly: true,\t//자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함\n-    secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n+    // secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n     secret: 'secret key',\t//암호화하는 데 쓰일 키\n     resave: false,\t//세션을 언제나 저장할지 설정함\n     saveUninitialized: true,\t//세션이 저장되기 전 uninitialized 상태로 미리 만들어 저장\n     cookie: {\t//세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)\n"
+                },
+                {
+                    "date": 1650503246606,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n console.log('Using limit: ', myLimit);\n \n // app.use(bodyParser.json({ limit: myLimit }));\n-app.use(session({\n+app.use(bodyParser.json(session({\n     httpOnly: true,\t//자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함\n     // secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n     secret: 'secret key',\t//암호화하는 데 쓰일 키\n     resave: false,\t//세션을 언제나 저장할지 설정함\n@@ -19,9 +19,9 @@\n     cookie: {\t//세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)\n         httpOnly: true,\n         Secure: true\n     }\n-}));\n+})));\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650503334959,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -43,8 +43,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n+                console.log(response);\n+\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650503340877,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -48,10 +48,10 @@\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n-                    console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n-                    console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n+                    // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n+                    // console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n             }).pipe(res);\n     }\n });\n"
+                },
+                {
+                    "date": 1650503461368,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,8 +26,9 @@\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n     res.header(\"Access-Control-Allow-Methods\", \"GET, PUT, PATCH, POST, DELETE\");\n     res.header(\"Access-Control-Allow-Headers\", req.header('access-control-request-headers'));\n+    req.header('set-cookie': SESSION_ID);\n \n     if (req.method === 'OPTIONS') {\n         // CORS Preflight\n         res.send();\n"
+                },
+                {
+                    "date": 1650503472566,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,9 @@\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n+var SESSION_ID = '';\n console.log('Using limit: ', myLimit);\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n@@ -26,9 +27,9 @@\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n     res.header(\"Access-Control-Allow-Methods\", \"GET, PUT, PATCH, POST, DELETE\");\n     res.header(\"Access-Control-Allow-Headers\", req.header('access-control-request-headers'));\n-    req.header('set-cookie': SESSION_ID);\n+    req.header('set-cookie', SESSION_ID);\n \n     if (req.method === 'OPTIONS') {\n         // CORS Preflight\n         res.send();\n"
+                },
+                {
+                    "date": 1650503510252,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -45,8 +45,9 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n+                SESSION_ID = response.headers.cookie;\n                 console.log(response);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650503516481,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -36,19 +36,19 @@\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n-        console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n-        console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n+        // console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n+        // console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n                 SESSION_ID = response.headers.cookie;\n-                console.log(response);\n+                console.log(SESSION_ID);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650503532155,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,9 +46,9 @@\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n                 SESSION_ID = response.headers.cookie;\n-                console.log(SESSION_ID);\n+                console.log(response);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650503730770,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -45,10 +45,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                SESSION_ID = response.headers.cookie;\n-                console.log(response);\n+                // SESSION_ID = response.headers.cookie;\n+                console.log(response.headers);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650503933482,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n+    cookie = require('cookie'),\n     app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n"
+                },
+                {
+                    "date": 1650503962640,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,8 +46,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n+                var cookies = cookie.parse(request.header.cookie);\n+\n                 // SESSION_ID = response.headers.cookie;\n                 console.log(response.headers);\n \n                 if (error) {\n"
+                },
+                {
+                    "date": 1650503978740,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,9 +7,9 @@\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n-var SESSION_ID = '';\n+var cookies = '';\n console.log('Using limit: ', myLimit);\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n@@ -46,11 +46,9 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                var cookies = cookie.parse(request.header.cookie);\n-\n-                // SESSION_ID = response.headers.cookie;\n+                cookies = cookie.parse(request.header.cookie);\n                 console.log(response.headers);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650504003200,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -28,9 +28,9 @@\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n     res.header(\"Access-Control-Allow-Methods\", \"GET, PUT, PATCH, POST, DELETE\");\n     res.header(\"Access-Control-Allow-Headers\", req.header('access-control-request-headers'));\n-    req.header('set-cookie', SESSION_ID);\n+    req.header('set-cookie', cookies);\n \n     if (req.method === 'OPTIONS') {\n         // CORS Preflight\n         res.send();\n@@ -47,9 +47,9 @@\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n                 cookies = cookie.parse(request.header.cookie);\n-                console.log(response.headers);\n+                console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650504028641,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,9 +46,9 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                cookies = cookie.parse(request.header.cookie);\n+                cookies = cookie.parse(request.headers.cookie);\n                 console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650504096423,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,8 +22,9 @@\n         httpOnly: true,\n         Secure: true\n     }\n })));\n+app.use(cookieParser());\n \n app.all('*', function (req, res, next) {\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n"
+                },
+                {
+                    "date": 1650504141747,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,8 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n-    cookie = require('cookie'),\n     app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n"
+                },
+                {
+                    "date": 1650504152737,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n+    cookieParser = require('cookie-parser'),\n     app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n"
+                },
+                {
+                    "date": 1650504182316,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,10 +47,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                cookies = cookie.parse(request.headers.cookie);\n-                console.log(cookies);\n+                // cookies = cookie.parse(request.headers.cookie);\n+                // console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650504214886,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,10 +47,9 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                // cookies = cookie.parse(request.headers.cookie);\n-                // console.log(cookies);\n+                console.log(request.headers);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650504227324,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,9 +47,9 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                console.log(request.headers);\n+                console.log(response.headers);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650504328915,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,9 +47,9 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                console.log(response.headers);\n+                console.log(response.headers.get('set-cookie'));\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650504373766,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,9 +47,9 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                console.log(response.headers.get('set-cookie'));\n+                console.log(response.headers.get('set-cookie');\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650504382156,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,9 +47,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                console.log(response.headers.get('set-cookie');\n+                console.log(response.headers.get('set-cookie'));\n+                console.log(response.headers.get('set-cookie'));\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650506314324,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,10 +47,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                console.log(response.headers.get('set-cookie'));\n-                console.log(response.headers.get('set-cookie'));\n+                console.log(response.headers);\n+                console.log(response.headers['set-cookie']);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650506355450,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,10 +47,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                console.log(response.headers);\n-                console.log(response.headers['set-cookie']);\n+                var cookies = response.headers['set-cookie'];\n+                console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650506372015,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,10 +38,10 @@\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n-        // console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n-        // console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n+        console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n+        console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650506427044,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,10 +53,10 @@\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n-                    // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n-                    // console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n+                    console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n+                    console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n             }).pipe(res);\n     }\n });\n"
+                },
+                {
+                    "date": 1650506470609,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -48,9 +48,9 @@\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n                 var cookies = response.headers['set-cookie'];\n-                console.log(cookies);\n+                // console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650506485399,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,10 +47,10 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n-                var cookies = response.headers['set-cookie'];\n-                // console.log(cookies);\n+                cookies = response.headers['set-cookie'];\n+                console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650506494230,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,16 +41,17 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n+        console.log(cookies);\n+\n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n-                console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650506503131,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,9 +41,9 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n-        console.log(cookies);\n+        console.log(req);\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650506568177,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,9 +41,9 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n-        console.log(req);\n+        console.log(req.header);\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650506614239,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,9 +41,9 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n-        console.log(req.header);\n+        console.log(JSON.stringify(req.header));\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650506644150,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,9 +41,9 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n-        console.log(JSON.stringify(req.header));\n+        console.log(JSON.stringify(req));\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650506660567,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,9 +41,9 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n-        console.log(JSON.stringify(req));\n+        console.log(req);\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650506759935,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,9 +29,9 @@\n     // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment\n     res.header(\"Access-Control-Allow-Origin\", \"*\");\n     res.header(\"Access-Control-Allow-Methods\", \"GET, PUT, PATCH, POST, DELETE\");\n     res.header(\"Access-Control-Allow-Headers\", req.header('access-control-request-headers'));\n-    req.header('set-cookie', cookies);\n+    // req.header('set-cookie', cookies);\n \n     if (req.method === 'OPTIONS') {\n         // CORS Preflight\n         res.send();\n"
+                },
+                {
+                    "date": 1650506778839,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,9 +47,9 @@\n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n         }\n-        request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') }, },\n+        request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n \n                 if (error) {\n"
+                },
+                {
+                    "date": 1650507437675,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,9 +49,11 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n-                cookies = response.headers['set-cookie'];\n+                // cookies = response.headers['set-cookie'];\n+                cookies = cookieParser(response.headers.cookie ||\n+                    '')\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650507442814,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,10 +50,9 @@\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n                 // cookies = response.headers['set-cookie'];\n-                cookies = cookieParser(response.headers.cookie ||\n-                    '')\n+                cookies = cookieParser(response.headers.cookie || '')\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650507484536,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -51,8 +51,9 @@\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n                 // cookies = response.headers['set-cookie'];\n                 cookies = cookieParser(response.headers.cookie || '')\n+                console.log(cookies)\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650507502821,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -56,10 +56,10 @@\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n-                    console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n-                    console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n+                    // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n+                    // console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n             }).pipe(res);\n     }\n });\n"
+                },
+                {
+                    "date": 1650507534654,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,9 +2,10 @@\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n     cookieParser = require('cookie-parser'),\n-    app = express();\n+    cookie = require('cookie');\n+app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n"
+                },
+                {
+                    "date": 1650507544143,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -51,9 +51,9 @@\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n                 // cookies = response.headers['set-cookie'];\n-                cookies = cookieParser(response.headers.cookie || '')\n+                cookies = cookie.parse(response.headers.cookie || '')\n                 console.log(cookies)\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650507640237,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,11 +50,13 @@\n             return;\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n-                // cookies = response.headers['set-cookie'];\n+                cookies = response.headers['set-cookie'];\n+                console.log(cookies);\n+\n                 cookies = cookie.parse(response.headers.cookie || '')\n-                console.log(cookies)\n+                console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650507646455,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,11 +53,11 @@\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n-                cookies = cookie.parse(response.headers.cookie || '')\n-                console.log(cookies);\n+                cookies = response.headers['set-cookie'];\n \n+\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650507663745,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,11 +53,11 @@\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n-                cookies = response.headers['set-cookie'];\n+                cookies = response.headers.get('set-cookie');\n+                console.log(cookies);\n \n-\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650507700671,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -51,9 +51,9 @@\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n-                console.log(cookies);\n+                console.log(cookies.replace(\"[\", \"\").replace(\"]\", \"\"));\n \n                 cookies = response.headers.get('set-cookie');\n                 console.log(cookies);\n \n"
+                },
+                {
+                    "date": 1650507706972,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,11 +53,8 @@\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n                 console.log(cookies.replace(\"[\", \"\").replace(\"]\", \"\"));\n \n-                cookies = response.headers.get('set-cookie');\n-                console.log(cookies);\n-\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650507737905,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -51,9 +51,9 @@\n         }\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n-                console.log(cookies.replace(\"[\", \"\").replace(\"]\", \"\"));\n+                console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650507763260,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,9 +42,9 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n-        console.log(req);\n+        // console.log(req);\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650507773783,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,10 +39,10 @@\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n-        console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n-        console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n+        // console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n+        // console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         // console.log(req);\n \n         if (!targetURL) {\n"
+                },
+                {
+                    "date": 1650507973568,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,8 +11,17 @@\n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n var cookies = '';\n console.log('Using limit: ', myLimit);\n \n+var get_cookies = function (request) {\n+    var cookies = {};\n+    request.headers && request.headers.cookie.split(';').forEach(function (cookie) {\n+        var parts = cookie.match(/(.*?)=(.*)$/)\n+        cookies[parts[1].trim()] = (parts[2] || '').trim();\n+    });\n+    return cookies;\n+};\n+\n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n     httpOnly: true,\t//자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함\n     // secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n@@ -53,8 +62,10 @@\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n+                cookies = response.headers.g\n+\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650508006082,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -62,9 +62,10 @@\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n-                cookies = response.headers.g\n+                cookies = get_cookies(cookies)['JSESSIONID'];\n+                console.log(cookies);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650508034402,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,17 +11,8 @@\n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n var cookies = '';\n console.log('Using limit: ', myLimit);\n \n-var get_cookies = function (request) {\n-    var cookies = {};\n-    request.headers && request.headers.cookie.split(';').forEach(function (cookie) {\n-        var parts = cookie.match(/(.*?)=(.*)$/)\n-        cookies[parts[1].trim()] = (parts[2] || '').trim();\n-    });\n-    return cookies;\n-};\n-\n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n     httpOnly: true,\t//자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함\n     // secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n"
+                },
+                {
+                    "date": 1650508041328,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,11 +53,8 @@\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n-                cookies = get_cookies(cookies)['JSESSIONID'];\n-                console.log(cookies);\n-\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650511454510,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,10 +42,8 @@\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         // console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         // console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n-        // console.log(req);\n-\n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n         }\n"
+                },
+                {
+                    "date": 1650513116530,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,9 @@\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n-var cookies = '';\n+var jsessionid = '';\n console.log('Using limit: ', myLimit);\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n@@ -46,8 +46,9 @@\n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n         }\n+\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n                 cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n"
+                },
+                {
+                    "date": 1650513121848,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,10 +49,10 @@\n         }\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n             function (error, response, body) {\n-                cookies = response.headers['set-cookie'];\n-                console.log(cookies);\n+                jsessionid = response.headers['set-cookie'];\n+                console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650513157946,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,9 +47,9 @@\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n         }\n \n-        request({ url: targetURL, method: req.method, json: req.body, headers: { 'Cookie': cookies }, },\n+        request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n                 jsessionid = response.headers['set-cookie'];\n                 console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650513179088,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,9 +49,9 @@\n         }\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n-                jsessionid = response.headers['set-cookie'];\n+                var cookies = response.headers['set-cookie'];\n                 console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650513406322,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,12 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n-    cookieParser = require('cookie-parser'),\n-    cookie = require('cookie');\n-app = express();\n+    setCookie = require('set-cookie-parser'),\n+    // cookieParser = require('cookie-parser'),\n+    // cookie = require('cookie');\n+    app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n@@ -50,8 +51,9 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n                 var cookies = response.headers['set-cookie'];\n+\n                 console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650513448955,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,12 +1,12 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n-    setCookie = require('set-cookie-parser'),\n-    // cookieParser = require('cookie-parser'),\n-    // cookie = require('cookie');\n-    app = express();\n+    setCookie = require('set-cookie-parser')\n+// cookieParser = require('cookie-parser'),\n+// cookie = require('cookie');\n+app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n@@ -50,10 +50,14 @@\n         }\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n-                var cookies = response.headers['set-cookie'];\n \n+                // var cookies = response.headers['set-cookie'];\n+                var cookies = setCookie.parse(response, {\n+                    decodeValues: true\n+                });\n+\n                 console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650513458038,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -56,9 +56,10 @@\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true\n                 });\n \n-                console.log(jsessionid);\n+                cookies.forEach(console.log);\n+                // console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n"
+                },
+                {
+                    "date": 1650513476485,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,11 +2,11 @@\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n     setCookie = require('set-cookie-parser')\n-// cookieParser = require('cookie-parser'),\n-// cookie = require('cookie');\n-app = express();\n+cookieParser = require('cookie-parser'),\n+    // cookie = require('cookie');\n+    app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n"
+                },
+                {
+                    "date": 1650513483929,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,12 +1,12 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n-    setCookie = require('set-cookie-parser')\n-cookieParser = require('cookie-parser'),\n-    // cookie = require('cookie');\n-    app = express();\n+    setCookie = require('set-cookie-parser'),\n+    cookieParser = require('cookie-parser')\n+// cookie = require('cookie');\n+app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n"
+                },
+                {
+                    "date": 1650513516205,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -55,10 +55,13 @@\n                 // var cookies = response.headers['set-cookie'];\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true\n                 });\n+                cookies.forEach(console.log);\n \n-                cookies.forEach(console.log);\n+                jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n+\n+\n                 // console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650513527076,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -58,10 +58,10 @@\n                 });\n                 cookies.forEach(console.log);\n \n                 jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n+                console.log(jsessionid);\n \n-\n                 // console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650513579996,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -55,15 +55,15 @@\n                 // var cookies = response.headers['set-cookie'];\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true\n                 });\n-                cookies.forEach(console.log);\n-\n-                jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 console.log(jsessionid);\n \n+                // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n+                // console.log(jsessionid);\n+\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650513597051,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -55,9 +55,9 @@\n                 // var cookies = response.headers['set-cookie'];\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true\n                 });\n-                console.log(jsessionid);\n+                console.log(cookies.value);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650513614814,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -55,12 +55,12 @@\n                 // var cookies = response.headers['set-cookie'];\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true\n                 });\n-                console.log(cookies.value);\n+                cookies.forEach(console.log);\n \n-                // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n-                // console.log(jsessionid);\n+                jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n+                console.log(jsessionid);\n \n                 // console.log(jsessionid);\n \n                 if (error) {\n"
+                },
+                {
+                    "date": 1650513621134,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,11 +57,9 @@\n                     decodeValues: true\n                 });\n                 cookies.forEach(console.log);\n \n-                jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n-                console.log(jsessionid);\n-\n+                // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n                 if (error) {\n                     console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1650513669595,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,9 +53,10 @@\n             function (error, response, body) {\n \n                 // var cookies = response.headers['set-cookie'];\n                 var cookies = setCookie.parse(response, {\n-                    decodeValues: true\n+                    decodeValues: true,\n+                    map: true\n                 });\n                 cookies.forEach(console.log);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n"
+                },
+                {
+                    "date": 1650514066863,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -56,9 +56,10 @@\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true,\n                     map: true\n                 });\n-                cookies.forEach(console.log);\n+                // cookies.forEach(console.log);\n+                console.log(cookies);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650514118926,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -56,11 +56,12 @@\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true,\n                     map: true\n                 });\n-                // cookies.forEach(console.log);\n-                console.log(cookies);\n \n+                var desiredCookie = cookies['session']\n+                console.log(desiredCookie);\n+\n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n                 if (error) {\n"
+                },
+                {
+                    "date": 1650514136339,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n                     decodeValues: true,\n                     map: true\n                 });\n \n-                var desiredCookie = cookies['session']\n+                var desiredCookie = cookies['JSESSIONID']\n                 console.log(desiredCookie);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650514143633,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n                     decodeValues: true,\n                     map: true\n                 });\n \n-                var desiredCookie = cookies['JSESSIONID']\n+                var desiredCookie = cookies['value'];\n                 console.log(desiredCookie);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650514158905,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n                     decodeValues: true,\n                     map: true\n                 });\n \n-                var desiredCookie = cookies['value'];\n+                var desiredCookie = cookies['JSESSIONID'];\n                 console.log(desiredCookie);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650514629735,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,9 +54,9 @@\n \n                 // var cookies = response.headers['set-cookie'];\n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true,\n-                    map: true\n+                    // map: true\n                 });\n \n                 var desiredCookie = cookies['JSESSIONID'];\n                 console.log(desiredCookie);\n"
+                },
+                {
+                    "date": 1650514638757,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,8 @@\n                     decodeValues: true,\n                     // map: true\n                 });\n \n-                var desiredCookie = cookies['JSESSIONID'];\n                 console.log(desiredCookie);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650514686443,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,17 +1,17 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n-    setCookie = require('set-cookie-parser'),\n-    cookieParser = require('cookie-parser')\n-// cookie = require('cookie');\n-app = express();\n+    // setCookie = require('set-cookie-parser'),\n+    // cookieParser = require('cookie-parser')\n+    // cookie = require('cookie');\n+    app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n-var jsessionid = '';\n+var cookie = '';\n console.log('Using limit: ', myLimit);\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n@@ -57,9 +57,9 @@\n                     decodeValues: true,\n                     // map: true\n                 });\n \n-                console.log(desiredCookie);\n+                console.log(cookies);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650514699948,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -51,13 +51,13 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                // var cookies = response.headers['set-cookie'];\n-                var cookies = setCookie.parse(response, {\n-                    decodeValues: true,\n-                    // map: true\n-                });\n+                cookies = response.headers['set-cookie'];\n+                // var cookies = setCookie.parse(response, {\n+                //     decodeValues: true,\n+                //     // map: true\n+                // });\n \n                 console.log(cookies);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n"
+                },
+                {
+                    "date": 1650514708059,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n-var cookie = '';\n+var cookies = '';\n console.log('Using limit: ', myLimit);\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n"
+                },
+                {
+                    "date": 1650514728537,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,11 +2,11 @@\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n     // setCookie = require('set-cookie-parser'),\n-    // cookieParser = require('cookie-parser')\n-    // cookie = require('cookie');\n-    app = express();\n+    cookieParser = require('cookie-parser')\n+// cookie = require('cookie');\n+app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n"
+                },
+                {
+                    "date": 1650514773107,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -51,15 +51,12 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                cookies = response.headers['set-cookie'];\n-                // var cookies = setCookie.parse(response, {\n-                //     decodeValues: true,\n-                //     // map: true\n-                // });\n+                // cookies = response.headers['set-cookie'];\n+                cookieParser.\n \n-                console.log(cookies);\n+                    console.log(cookies);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650515105229,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,10 +16,10 @@\n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n     httpOnly: true,\t//자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함\n     // secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n-    secret: 'secret key',\t//암호화하는 데 쓰일 키\n-    resave: false,\t//세션을 언제나 저장할지 설정함\n+    // secret: 'secret key',\t//암호화하는 데 쓰일 키\n+    resave: true,\t//세션을 언제나 저장할지 설정함\n     saveUninitialized: true,\t//세션이 저장되기 전 uninitialized 상태로 미리 만들어 저장\n     cookie: {\t//세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)\n         httpOnly: true,\n         Secure: true\n"
+                },
+                {
+                    "date": 1650515117330,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,9 +21,9 @@\n     resave: true,\t//세션을 언제나 저장할지 설정함\n     saveUninitialized: true,\t//세션이 저장되기 전 uninitialized 상태로 미리 만들어 저장\n     cookie: {\t//세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)\n         httpOnly: true,\n-        Secure: true\n+        Secure: true,\n     }\n })));\n app.use(cookieParser());\n \n"
+                },
+                {
+                    "date": 1650515126030,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,8 +22,9 @@\n     saveUninitialized: true,\t//세션이 저장되기 전 uninitialized 상태로 미리 만들어 저장\n     cookie: {\t//세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)\n         httpOnly: true,\n         Secure: true,\n+        value: true\n     }\n })));\n app.use(cookieParser());\n \n"
+                },
+                {
+                    "date": 1650515164181,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,12 +53,11 @@\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n                 // cookies = response.headers['set-cookie'];\n-                cookieParser.\n+                var jsessionid = cookieParser.JSONCookies(\"value\");\n+                console.log(jsessionid);\n \n-                    console.log(cookies);\n-\n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n                 if (error) {\n"
+                },
+                {
+                    "date": 1650515180180,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n-var cookies = '';\n+var jsessionid = '';\n console.log('Using limit: ', myLimit);\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n"
+                },
+                {
+                    "date": 1650515210671,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,9 +53,9 @@\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n                 // cookies = response.headers['set-cookie'];\n-                var jsessionid = cookieParser.JSONCookies(\"value\");\n+                jsessionid = cookieParser.JSONCookie(\"value\");\n                 console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650515238234,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -52,9 +52,11 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                // cookies = response.headers['set-cookie'];\n+                var cookies = response.headers['set-cookie'];\n+                console.log(cookies);\n+\n                 jsessionid = cookieParser.JSONCookie(\"value\");\n                 console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n"
+                },
+                {
+                    "date": 1650515251858,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -55,9 +55,9 @@\n \n                 var cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n-                jsessionid = cookieParser.JSONCookie(\"value\");\n+                jsessionid = cookieParser.value;\n                 console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650515269003,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -55,9 +55,9 @@\n \n                 var cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n-                jsessionid = cookieParser.value;\n+                jsessionid = cookieParser.JSESSIONID;\n                 console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650515349863,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -52,10 +52,10 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                var cookies = response.headers['set-cookie'];\n-                console.log(cookies);\n+                // var cookies = response.headers['set-cookie'];\n+                // console.log(cookies);\n \n                 jsessionid = cookieParser.JSESSIONID;\n                 console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650515356024,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n var express = require('express'),\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n-    // setCookie = require('set-cookie-parser'),\n+    setCookie = require('set-cookie-parser'),\n     cookieParser = require('cookie-parser')\n // cookie = require('cookie');\n app = express();\n \n"
+                },
+                {
+                    "date": 1650515371112,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -52,13 +52,18 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n+                var cookies = setCookie.parse(res, {\n+                    decodeValues: true,  // default: true\n+                    map: true           //default: false\n+                });\n+\n                 // var cookies = response.headers['set-cookie'];\n                 // console.log(cookies);\n \n-                jsessionid = cookieParser.JSESSIONID;\n-                console.log(jsessionid);\n+                // jsessionid = cookieParser.JSESSIONID;\n+                // console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n                 // console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650515391707,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,8 +57,11 @@\n                     decodeValues: true,  // default: true\n                     map: true           //default: false\n                 });\n \n+                var desiredCookie = cookies['session'];\n+                console.log(desiredCookie);\n+\n                 // var cookies = response.headers['set-cookie'];\n                 // console.log(cookies);\n \n                 // jsessionid = cookieParser.JSESSIONID;\n"
+                },
+                {
+                    "date": 1650515412493,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,10 +57,10 @@\n                     decodeValues: true,  // default: true\n                     map: true           //default: false\n                 });\n \n-                var desiredCookie = cookies['session'];\n-                console.log(desiredCookie);\n+                // var desiredCookie = cookies['session'];\n+                console.log(cookies);\n \n                 // var cookies = response.headers['set-cookie'];\n                 // console.log(cookies);\n \n"
+                },
+                {
+                    "date": 1650515466163,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,11 +57,11 @@\n                     decodeValues: true,  // default: true\n                     map: true           //default: false\n                 });\n \n-                // var desiredCookie = cookies['session'];\n-                console.log(cookies);\n \n+                cookies.forEach(console.log);\n+\n                 // var cookies = response.headers['set-cookie'];\n                 // console.log(cookies);\n \n                 // jsessionid = cookieParser.JSESSIONID;\n"
+                },
+                {
+                    "date": 1650515476431,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,12 +54,10 @@\n             function (error, response, body) {\n \n                 var cookies = setCookie.parse(res, {\n                     decodeValues: true,  // default: true\n-                    map: true           //default: false\n                 });\n \n-\n                 cookies.forEach(console.log);\n \n                 // var cookies = response.headers['set-cookie'];\n                 // console.log(cookies);\n"
+                },
+                {
+                    "date": 1650515497030,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -52,9 +52,9 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                var cookies = setCookie.parse(res, {\n+                var cookies = setCookie.parse(response, {\n                     decodeValues: true,  // default: true\n                 });\n \n                 cookies.forEach(console.log);\n"
+                },
+                {
+                    "date": 1650515515909,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,8 +54,9 @@\n             function (error, response, body) {\n \n                 var cookies = setCookie.parse(response, {\n                     decodeValues: true,  // default: true\n+                    map: true\n                 });\n \n                 cookies.forEach(console.log);\n \n"
+                },
+                {
+                    "date": 1650515533134,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n                     decodeValues: true,  // default: true\n                     map: true\n                 });\n \n-                cookies.forEach(console.log);\n+                console.log(cookies);\n \n                 // var cookies = response.headers['set-cookie'];\n                 // console.log(cookies);\n \n"
+                },
+                {
+                    "date": 1650515851252,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -52,18 +52,18 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                var cookies = setCookie.parse(response, {\n-                    decodeValues: true,  // default: true\n-                    map: true\n-                });\n+                // var cookies = setCookie.parse(response, {\n+                //     decodeValues: true,  // default: true\n+                //     map: true\n+                // });\n \n+                // console.log(cookies);\n+\n+                var cookies = response.headers['set-cookie'];\n                 console.log(cookies);\n \n-                // var cookies = response.headers['set-cookie'];\n-                // console.log(cookies);\n-\n                 // jsessionid = cookieParser.JSESSIONID;\n                 // console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n"
+                },
+                {
+                    "date": 1650515890232,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -60,8 +60,9 @@\n \n                 // console.log(cookies);\n \n                 var cookies = response.headers['set-cookie'];\n+                const jsessionid = cookies.find((cookie) => cookie.startsWith('value:'))\n                 console.log(cookies);\n \n                 // jsessionid = cookieParser.JSESSIONID;\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650515912947,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -61,8 +61,9 @@\n                 // console.log(cookies);\n \n                 var cookies = response.headers['set-cookie'];\n                 const jsessionid = cookies.find((cookie) => cookie.startsWith('value:'))\n+                const parsedCookie = cookie.parse(jsessionid)\n                 console.log(cookies);\n \n                 // jsessionid = cookieParser.JSESSIONID;\n                 // console.log(jsessionid);\n"
+                },
+                {
+                    "date": 1650516196380,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,8 +12,16 @@\n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n var jsessionid = '';\n console.log('Using limit: ', myLimit);\n \n+function getSessionId(response) {\n+    const cookies = setCookie.parse(response.headers['set-cookie'], {\n+        decodeValues: true,\n+        map: true,\n+    });\n+    return cookies['sessionid'] && cookies['sessionid']['value'];\n+}\n+\n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n     httpOnly: true,\t//자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함\n     // secure: ture,\t//https 환경에서만 session 정보를 주고받도록처리\n@@ -59,12 +67,13 @@\n                 // });\n \n                 // console.log(cookies);\n \n-                var cookies = response.headers['set-cookie'];\n-                const jsessionid = cookies.find((cookie) => cookie.startsWith('value:'))\n-                const parsedCookie = cookie.parse(jsessionid)\n-                console.log(cookies);\n+                var cookies = setCookie.parse(response.headers['set-cookie'], {\n+                    decodeValues: true,\n+                    map: true\n+                });\n+                jsessionid = cookies\n \n                 // jsessionid = cookieParser.JSESSIONID;\n                 // console.log(jsessionid);\n \n"
+                },
+                {
+                    "date": 1650516239324,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -60,21 +60,14 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                // var cookies = setCookie.parse(response, {\n-                //     decodeValues: true,  // default: true\n-                //     map: true\n-                // });\n+                var cookies = response.headers['set-cookie'];\n+                console.log(cookies);\n \n-                // console.log(cookies);\n+                jsessionid = getSessionId(response);\n+                console.log(jsessionid);\n \n-                var cookies = setCookie.parse(response.headers['set-cookie'], {\n-                    decodeValues: true,\n-                    map: true\n-                });\n-                jsessionid = cookies\n-\n                 // jsessionid = cookieParser.JSESSIONID;\n                 // console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n"
+                },
+                {
+                    "date": 1650517199663,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,9 +10,9 @@\n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n var jsessionid = '';\n-console.log('Using limit: ', myLimit);\n+// console.log('Using limit: ', myLimit);\n \n function getSessionId(response) {\n     const cookies = setCookie.parse(response.headers['set-cookie'], {\n         decodeValues: true,\n"
+                },
+                {
+                    "date": 1650517206997,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,11 +8,11 @@\n app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n-var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n+// var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n+// console.log('Using limit: ', myLimit);\n var jsessionid = '';\n-// console.log('Using limit: ', myLimit);\n \n function getSessionId(response) {\n     const cookies = setCookie.parse(response.headers['set-cookie'], {\n         decodeValues: true,\n"
+                },
+                {
+                    "date": 1650517228698,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,9 +17,9 @@\n     const cookies = setCookie.parse(response.headers['set-cookie'], {\n         decodeValues: true,\n         map: true,\n     });\n-    return cookies['sessionid'] && cookies['sessionid']['value'];\n+    return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n }\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n"
+                },
+                {
+                    "date": 1650517519904,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -60,11 +60,9 @@\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n-                var cookies = response.headers['set-cookie'];\n-                console.log(cookies);\n-\n+                // var cookies = response.headers['set-cookie'];\n                 jsessionid = getSessionId(response);\n                 console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSESSIONID;\n"
+                },
+                {
+                    "date": 1650517535359,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -61,10 +61,8 @@\n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n \n                 // var cookies = response.headers['set-cookie'];\n-                jsessionid = getSessionId(response);\n-                console.log(jsessionid);\n \n                 // jsessionid = cookieParser.JSESSIONID;\n                 // console.log(jsessionid);\n \n@@ -76,8 +74,12 @@\n                 } else {\n                     // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n                     // console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n+\n+                jsessionid = getSessionId(response);\n+                console.log(jsessionid);\n+\n             }).pipe(res);\n     }\n });\n \n"
+                },
+                {
+                    "date": 1650517789979,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -76,10 +76,12 @@\n                     // console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n \n                 jsessionid = getSessionId(response);\n-                console.log(jsessionid);\n+                if (jsessionid != undefined) {\n+                    console.log(jsessionid);\n \n+                }\n             }).pipe(res);\n     }\n });\n \n"
+                },
+                {
+                    "date": 1650517795538,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -71,16 +71,15 @@\n \n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n-                    // console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n-                    // console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n+                    console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n+                    console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n \n                 jsessionid = getSessionId(response);\n                 if (jsessionid != undefined) {\n                     console.log(jsessionid);\n-\n                 }\n             }).pipe(res);\n     }\n });\n"
+                },
+                {
+                    "date": 1650517907152,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,10 +49,10 @@\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n-        // console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n-        // console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n+        console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n+        console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1650518729357,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -59,17 +59,10 @@\n         }\n \n         request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n             function (error, response, body) {\n-\n                 // var cookies = response.headers['set-cookie'];\n \n-                // jsessionid = cookieParser.JSESSIONID;\n-                // console.log(jsessionid);\n-\n-                // jsessionid = cookieParser.JSONCookie(\"JSESSIONID\");\n-                // console.log(jsessionid);\n-\n                 if (error) {\n                     console.error('error: ' + error)\n                 } else {\n                     console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n"
+                },
+                {
+                    "date": 1650518748988,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -70,9 +70,11 @@\n                 }\n \n                 jsessionid = getSessionId(response);\n                 if (jsessionid != undefined) {\n-                    console.log(jsessionid);\n+                    var cookies = response.headers['set-cookie'];\n+                    console.log(cookies);\n+                    // console.log(jsessionid);\n                 }\n             }).pipe(res);\n     }\n });\n"
+                },
+                {
+                    "date": 1650518912434,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -68,13 +68,16 @@\n                     console.log(\">>>>>>>>>> [RESPONSE/HEAD] : \" + JSON.stringify(body.dataHeader, null, 4));\n                     console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n \n-                jsessionid = getSessionId(response);\n-                if (jsessionid != undefined) {\n-                    var cookies = response.headers['set-cookie'];\n-                    console.log(cookies);\n-                    // console.log(jsessionid);\n+                if (jsessionid == '') {\n+                    jsessionid = getSessionId(response);\n+                    if (jsessionid != undefined) {\n+                        var cookies = response.headers['set-cookie'];\n+                        console.log(cookies);\n+                        // console.log(jsessionid);\n+                    }\n+\n                 }\n             }).pipe(res);\n     }\n });\n"
                 }
             ],
             "date": 1649995788856,
