@@ -69,13 +69,11 @@ app.all('*', function (req, res, next) {
                     console.log(">>>>>>>>>> [RESPONSE/BODY] : " + JSON.stringify(body.dataBody, null, 4));
                 }
 
-                if (jsessionid == '') {
-                    jsessionid = getSessionId(response);
-                    if (jsessionid != undefined) {
-                        var cookies = response.headers['set-cookie'];
-                        console.log(cookies);
-                        // console.log(jsessionid);
-                    }
+                var _jsessionid = getSessionId(response);
+                if (_jsessionid != undefined) {
+                    jsessionid = _jsessionid;
+                    // var cookies = response.headers['set-cookie'];
+                    console.log('jsessionid : ' + jsessionid);
                 }
             }).pipe(res);
     }
