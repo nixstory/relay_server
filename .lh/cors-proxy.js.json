@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 191,
+            "activePatchIndex": 192,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -772,6 +772,10 @@
                 {
                     "date": 1650603625152,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -69,9 +69,8 @@\n                     console.log(\">>>>>>>>>> [RESPONSE/BODY] : \" + JSON.stringify(body.dataBody, null, 4));\n                 }\n \n                 var _jsessionid = getSessionId(response);\n-                console.log('_jsessionid : ' + _jsessionid);\n                 if (_jsessionid != undefined) {\n                     jsessionid = _jsessionid;\n                     // var cookies = response.headers['set-cookie'];\n                     console.log('jsessionid : ' + jsessionid);\n"
+                },
+                {
+                    "date": 1652668288082,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,13 +13,22 @@\n // console.log('Using limit: ', myLimit);\n var jsessionid = '';\n \n function getSessionId(response) {\n-    const cookies = setCookie.parse(response.headers['set-cookie'], {\n-        decodeValues: true,\n-        map: true,\n-    });\n-    return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n+    // const cookies = setCookie.parse(response.headers['set-cookie'], {\n+    //     decodeValues: true,\n+    //     map: true,\n+    // });\n+    // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n+    if (response.headers != undefined) {\n+        const cookies = setCookie.parse(response.headers['set-cookie'], {\n+            decodeValues: true,\n+            map: true,\n+        });\n+        return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n+    } else {\n+        return \"\";\n+    }\n }\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n"
                 }
             ],
             "date": 1649995788856,

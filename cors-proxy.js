@@ -14,11 +14,20 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var jsessionid = '';
 
 function getSessionId(response) {
-    const cookies = setCookie.parse(response.headers['set-cookie'], {
-        decodeValues: true,
-        map: true,
-    });
-    return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];
+    // const cookies = setCookie.parse(response.headers['set-cookie'], {
+    //     decodeValues: true,
+    //     map: true,
+    // });
+    // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];
+    if (response.headers != undefined) {
+        const cookies = setCookie.parse(response.headers['set-cookie'], {
+            decodeValues: true,
+            map: true,
+        });
+        return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];
+    } else {
+        return "";
+    }
 }
 
 // app.use(bodyParser.json({ limit: myLimit }));
