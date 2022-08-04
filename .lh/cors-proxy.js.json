@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 192,
+            "activePatchIndex": 211,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -776,6 +776,82 @@
                 {
                     "date": 1652668288082,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,13 +13,22 @@\n // console.log('Using limit: ', myLimit);\n var jsessionid = '';\n \n function getSessionId(response) {\n-    const cookies = setCookie.parse(response.headers['set-cookie'], {\n-        decodeValues: true,\n-        map: true,\n-    });\n-    return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n+    // const cookies = setCookie.parse(response.headers['set-cookie'], {\n+    //     decodeValues: true,\n+    //     map: true,\n+    // });\n+    // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n+    if (response.headers != undefined) {\n+        const cookies = setCookie.parse(response.headers['set-cookie'], {\n+            decodeValues: true,\n+            map: true,\n+        });\n+        return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n+    } else {\n+        return \"\";\n+    }\n }\n \n // app.use(bodyParser.json({ limit: myLimit }));\n app.use(bodyParser.json(session({\n"
+                },
+                {
+                    "date": 1653978087724,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,9 @@\n     //     decodeValues: true,\n     //     map: true,\n     // });\n     // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n-    if (response.headers != undefined) {\n+    if ((response.headers != null) && (response.headers != undefined)) {\n         const cookies = setCookie.parse(response.headers['set-cookie'], {\n             decodeValues: true,\n             map: true,\n         });\n"
+                },
+                {
+                    "date": 1653978094222,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -90,6 +90,6 @@\n \n app.set('port', process.env.PORT || 4000);\n \n app.listen(app.get('port'), function () {\n-    console.log('Proxy server listening on port ' + app.get('port'));\n+    console.log('########## Proxy server listening on port ' + app.get('port'));\n });\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1653983836601,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n         res.send();\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n-        console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+        // console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n"
+                },
+                {
+                    "date": 1653983877598,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n         res.send();\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n-        // console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+        console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n"
+                },
+                {
+                    "date": 1656311949888,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n         res.send();\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n-        console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+        // console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n"
+                },
+                {
+                    "date": 1656312263254,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n         res.send();\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n-        // console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+        console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n"
+                },
+                {
+                    "date": 1659591759775,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,8 +57,9 @@\n         res.send();\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n+        console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n         console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n"
+                },
+                {
+                    "date": 1659591792439,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -58,9 +58,11 @@\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n-        console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+        if (req.body.dataHeader.trxCd != null) {\n+            console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+        }\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n"
+                },
+                {
+                    "date": 1659591852365,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -58,10 +58,15 @@\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n-        if (req.body.dataHeader.trxCd != null) {\n-            console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+        try {\n+            if (req.body.dataHeader.trxCd != null) {\n+                console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+            }\n+\n+        } catch {\n+\n         }\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n"
+                },
+                {
+                    "date": 1659591874932,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -62,11 +62,10 @@\n         try {\n             if (req.body.dataHeader.trxCd != null) {\n                 console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             }\n-\n-        } catch {\n-\n+        } catch (e) {\n+            console.log(e)\n         }\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n"
+                },
+                {
+                    "date": 1659591880894,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -63,9 +63,9 @@\n             if (req.body.dataHeader.trxCd != null) {\n                 console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             }\n         } catch (e) {\n-            console.log(e)\n+            console.log(e);\n         }\n         console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n         console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n"
+                },
+                {
+                    "date": 1659591915130,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -59,9 +59,9 @@\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n         try {\n-            if (req.body.dataHeader.trxCd != null) {\n+            if (req.body.dataHeader.trxCd != undefined) {\n                 console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             }\n         } catch (e) {\n             console.log(e);\n"
+                },
+                {
+                    "date": 1659591925123,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -59,16 +59,16 @@\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n         try {\n-            if (req.body.dataHeader.trxCd != undefined) {\n-                console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n-            }\n+            // if (req.body.dataHeader.trxCd != undefined) {\n+            // }\n+            console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+            console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n+            console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n         } catch (e) {\n             console.log(e);\n         }\n-        console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n-        console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n \n         if (!targetURL) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1659591943673,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -61,11 +61,11 @@\n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n         try {\n             // if (req.body.dataHeader.trxCd != undefined) {\n             // }\n-            console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n-            console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n-            console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n+            // console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+            // console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n+            // console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n         } catch (e) {\n             console.log(e);\n         }\n \n"
+                },
+                {
+                    "date": 1659592609601,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -61,11 +61,11 @@\n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n         try {\n             // if (req.body.dataHeader.trxCd != undefined) {\n             // }\n-            // console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n-            // console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n-            // console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n+            console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n+            console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n+            console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n         } catch (e) {\n             console.log(e);\n         }\n \n"
+                },
+                {
+                    "date": 1659592668630,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -59,10 +59,8 @@\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n \n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n         try {\n-            // if (req.body.dataHeader.trxCd != undefined) {\n-            // }\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n             console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n         } catch (e) {\n"
+                },
+                {
+                    "date": 1659592759822,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -56,8 +56,9 @@\n         // CORS Preflight\n         res.send();\n     } else {\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n+        var authorization = req.header('authorization');\n \n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n         try {\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n"
+                },
+                {
+                    "date": 1659592773225,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -59,8 +59,9 @@\n         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n         var authorization = req.header('authorization');\n \n         console.log(\">>>>>>>>>> [targetURL] : \" + targetURL);\n+        console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n         try {\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n             console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n"
+                },
+                {
+                    "date": 1659592805614,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -73,9 +73,9 @@\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n         }\n \n-        request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },\n+        request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid, 'authorization': authorization }, },\n             function (error, response, body) {\n                 // var cookies = response.headers['set-cookie'];\n \n                 if (error) {\n"
                 }
             ],
             "date": 1649995788856,

@@ -19,7 +19,7 @@ function getSessionId(response) {
     //     map: true,
     // });
     // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];
-    if (response.headers != undefined) {
+    if ((response.headers != null) && (response.headers != undefined)) {
         const cookies = setCookie.parse(response.headers['set-cookie'], {
             decodeValues: true,
             map: true,
@@ -57,17 +57,24 @@ app.all('*', function (req, res, next) {
         res.send();
     } else {
         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com
+        var authorization = req.header('authorization');
 
-        console.log(">>>>>>>>>> [TRXCD] : " + req.body.dataHeader.trxCd);
-        console.log(">>>>>>>>>> [REQUEST/HEAD] : " + JSON.stringify(req.body.dataHeader, null, 4));
-        console.log(">>>>>>>>>> [REQUEST/BODY] : " + JSON.stringify(req.body.dataBody, null, 4));
+        console.log(">>>>>>>>>> [targetURL] : " + targetURL);
+        console.log(">>>>>>>>>> [authorization] : " + authorization);
+        try {
+            console.log(">>>>>>>>>> [TRXCD] : " + req.body.dataHeader.trxCd);
+            console.log(">>>>>>>>>> [REQUEST/HEAD] : " + JSON.stringify(req.body.dataHeader, null, 4));
+            console.log(">>>>>>>>>> [REQUEST/BODY] : " + JSON.stringify(req.body.dataBody, null, 4));
+        } catch (e) {
+            console.log(e);
+        }
 
         if (!targetURL) {
             res.send(500, { error: 'There is no Target-Endpoint header in the request' });
             return;
         }
 
-        request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },
+        request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid, 'authorization': authorization }, },
             function (error, response, body) {
                 // var cookies = response.headers['set-cookie'];
 
@@ -91,5 +98,5 @@ app.all('*', function (req, res, next) {
 app.set('port', process.env.PORT || 4000);
 
 app.listen(app.get('port'), function () {
-    console.log('Proxy server listening on port ' + app.get('port'));
+    console.log('########## Proxy server listening on port ' + app.get('port'));
 });
