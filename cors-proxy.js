@@ -5,6 +5,7 @@ var express = require('express'),
     setCookie = require('set-cookie-parser'),
     cookieParser = require('cookie-parser')
 // cookie = require('cookie');
+
 app = express();
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -58,40 +59,70 @@ app.all('*', function (req, res, next) {
     } else {
         var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com
         var authorization = req.header('authorization');
-
-        console.log(">>>>>>>>>> [targetURL] : " + targetURL);
-        console.log(">>>>>>>>>> [authorization] : " + authorization);
-        try {
-            console.log(">>>>>>>>>> [TRXCD] : " + req.body.dataHeader.trxCd);
-            console.log(">>>>>>>>>> [REQUEST/HEAD] : " + JSON.stringify(req.body.dataHeader, null, 4));
-            console.log(">>>>>>>>>> [REQUEST/BODY] : " + JSON.stringify(req.body.dataBody, null, 4));
-        } catch (e) {
-            console.log(e);
-        }
+        var ServiceType = req.header('Service-Type');
 
         if (!targetURL) {
             res.send(500, { error: 'There is no Target-Endpoint header in the request' });
             return;
         }
 
-        request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid, 'authorization': authorization }, },
-            function (error, response, body) {
-                // var cookies = response.headers['set-cookie'];
+        console.log(">>>>>>>>>> [targetURL] : " + targetURL);
+        console.log(">>>>>>>>>> [ServiceType] : " + ServiceType);
 
-                if (error) {
-                    console.error('error: ' + error)
-                } else {
-                    console.log(">>>>>>>>>> [RESPONSE/HEAD] : " + JSON.stringify(body.dataHeader, null, 4));
-                    console.log(">>>>>>>>>> [RESPONSE/BODY] : " + JSON.stringify(body.dataBody, null, 4));
-                }
+        if (ServiceType == "DLS") {
+            console.log(">>>>>>>>>> [authorization] : " + authorization);
 
-                var _jsessionid = getSessionId(response);
-                if (_jsessionid != undefined) {
-                    jsessionid = _jsessionid;
+            request({ url: targetURL, method: req.method, json: req.body, headers: { 'authorization': authorization }, },
+                function (error, response, body) {
+                    if (error) {
+                        console.error('error: ' + error)
+                    } else {
+                        console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                    }
+                }).pipe(res);
+        } else if (ServiceType == "AVATA") {
+            console.log(">>>>>>>>>> [req.body] : " + JSON.stringify(req.body));
+
+            var form = new FormData();
+            form.set('client_id', req.body.client_id);
+            form.set('client_secret', req.body.client_secret);
+
+            request({
+                url: targetURL, method: req.method, headers: {
+                    "Content-Type": "multipart/form-data"
+                }, body: form,
+            },
+                function (error, response, body) {
+                    if (error) {
+                        console.error('error: ' + error)
+                    } else {
+                        console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                    }
+                }).pipe(res);
+        } else {
+            console.log(">>>>>>>>>> [TRXCD] : " + req.body.dataHeader.trxCd);
+            console.log(">>>>>>>>>> [REQUEST/HEAD] : " + JSON.stringify(req.body.dataHeader, null, 4));
+            console.log(">>>>>>>>>> [REQUEST/BODY] : " + JSON.stringify(req.body.dataBody, null, 4));
+
+            request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },
+                function (error, response, body) {
                     // var cookies = response.headers['set-cookie'];
-                    console.log('jsessionid : ' + jsessionid);
-                }
-            }).pipe(res);
+
+                    if (error) {
+                        console.error('error: ' + error)
+                    } else {
+                        console.log(">>>>>>>>>> [RESPONSE/HEAD] : " + JSON.stringify(body.dataHeader, null, 4));
+                        console.log(">>>>>>>>>> [RESPONSE/BODY] : " + JSON.stringify(body.dataBody, null, 4));
+                    }
+
+                    var _jsessionid = getSessionId(response);
+                    if (_jsessionid != undefined) {
+                        jsessionid = _jsessionid;
+                        // var cookies = response.headers['set-cookie'];
+                        console.log('jsessionid : ' + jsessionid);
+                    }
+                }).pipe(res);
+        }
     }
 });
 
