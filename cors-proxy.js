@@ -57,22 +57,23 @@ app.all('*', function (req, res, next) {
         // CORS Preflight
         res.send();
     } else {
-        var targetURL = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com
+        var targetUrl = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com
         var authorization = req.header('authorization');
         var ServiceType = req.header('Service-Type');
+        var ServiceUrl = req.header('Service-Url');
 
-        if (!targetURL) {
+        if (!targetUrl) {
             res.send(500, { error: 'There is no Target-Endpoint header in the request' });
             return;
         }
 
-        console.log(">>>>>>>>>> [targetURL] : " + targetURL);
+        console.log(">>>>>>>>>> [targetUrl] : " + targetUrl);
         console.log(">>>>>>>>>> [ServiceType] : " + ServiceType);
 
         if (ServiceType == "DLS") {
             console.log(">>>>>>>>>> [authorization] : " + authorization);
 
-            request({ url: targetURL, method: req.method, json: req.body, headers: { 'authorization': authorization }, },
+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },
                 function (error, response, body) {
                     if (error) {
                         console.error('error: ' + error)
@@ -81,30 +82,69 @@ app.all('*', function (req, res, next) {
                     }
                 }).pipe(res);
         } else if (ServiceType == "AVATA") {
+            console.log(">>>>>>>>>> [ServiceUrl] : " + ServiceUrl);
             console.log(">>>>>>>>>> [req.body] : " + JSON.stringify(req.body));
 
-            var form = new FormData();
-            form.set('client_id', req.body.client_id);
-            form.set('client_secret', req.body.client_secret);
+            if (ServiceUrl == "/authorize") {
+                var client_id = req.body.dataBody.client_id;
+                var client_secret = req.body.dataBody.client_secret;
+                console.log(">>>>>>>>>> [client_id] : " + client_id);
+                console.log(">>>>>>>>>> [client_secret] : " + client_secret);
 
-            request({
-                url: targetURL, method: req.method, headers: {
-                    "Content-Type": "multipart/form-data"
-                }, body: form,
-            },
-                function (error, response, body) {
-                    if (error) {
-                        console.error('error: ' + error)
-                    } else {
-                        console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                request.post({
+                    url: targetUrl, headers: {
+                        "Content-Type": "multipart/form-data",
+                        "accept": "*/*"
+                    }, "formData": {
+                        client_id: (client_id || 'NA'),
+                        client_secret: (client_secret || 'NA')
                     }
-                }).pipe(res);
+                },
+                    function (error, response, body) {
+                        if (error) {
+                            console.error('error: ' + error)
+                        } else {
+                            console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                        }
+                    }).pipe(res);
+            } else if (ServiceUrl == "/snowme_process") {
+                request({
+                    url: targetUrl, method: req.method, json: req.body, headers: {
+                        "Authorization": authorization, Accept: "application/json"
+                    },
+                },
+                    function (error, response, body) {
+                        if (error) {
+                            console.error('error: ' + error)
+                        } else {
+                            console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                        }
+                    }).pipe(res);
+            } else if (ServiceUrl == "/extends") {
+                var image = req.body.dataBody.image;
+
+                request.post({
+                    url: targetUrl, headers: {
+                        "Content-Type": "multipart/form-data",
+                        "accept": "*/*"
+                    }, "formData": {
+                        image: (image || 'NA'),
+                    }
+                },
+                    function (error, response, body) {
+                        if (error) {
+                            console.error('error: ' + error)
+                        } else {
+                            console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                        }
+                    }).pipe(res);
+            }
         } else {
             console.log(">>>>>>>>>> [TRXCD] : " + req.body.dataHeader.trxCd);
             console.log(">>>>>>>>>> [REQUEST/HEAD] : " + JSON.stringify(req.body.dataHeader, null, 4));
             console.log(">>>>>>>>>> [REQUEST/BODY] : " + JSON.stringify(req.body.dataBody, null, 4));
 
-            request({ url: targetURL, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },
+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'cookie': 'JSESSIONID=' + jsessionid }, },
                 function (error, response, body) {
                     // var cookies = response.headers['set-cookie'];
 
