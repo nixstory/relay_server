@@ -83,6 +83,7 @@ app.all('*', function (req, res, next) {
                 }).pipe(res);
         } else if (ServiceType == "AVATA") {
             console.log(">>>>>>>>>> [ServiceUrl] : " + ServiceUrl);
+            console.log(">>>>>>>>>> [authorization] : " + authorization);
             console.log(">>>>>>>>>> [req.body] : " + JSON.stringify(req.body));
 
             if (ServiceUrl == "/authorize") {
@@ -110,7 +111,7 @@ app.all('*', function (req, res, next) {
             } else if (ServiceUrl == "/snowme_process") {
                 request({
                     url: targetUrl, method: req.method, json: req.body, headers: {
-                        "Authorization": authorization, Accept: "application/json"
+                        "Authorization": "Bearer " + authorization
                     },
                 },
                     function (error, response, body) {
@@ -121,14 +122,9 @@ app.all('*', function (req, res, next) {
                         }
                     }).pipe(res);
             } else if (ServiceUrl == "/extends") {
-                var image = req.body.dataBody.image;
-
-                request.post({
-                    url: targetUrl, headers: {
-                        "Content-Type": "multipart/form-data",
-                        "accept": "*/*"
-                    }, "formData": {
-                        image: (image || 'NA'),
+                request({
+                    url: targetUrl, method: req.method, json: req.body, headers: {
+                        "Authorization": "Bearer " + authorization
                     }
                 },
                     function (error, response, body) {

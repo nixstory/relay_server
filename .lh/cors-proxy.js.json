@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 395,
+            "activePatchIndex": 403,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -1588,6 +1588,38 @@
                 {
                     "date": 1659949879487,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,12 +2,12 @@\n     request = require('request'),\n     session = require('express-session'),\n     bodyParser = require('body-parser'),\n     setCookie = require('set-cookie-parser'),\n-    cookieParser = require('cookie-parser'),\n-    // cookie = require('cookie');\n+    cookieParser = require('cookie-parser')\n+// cookie = require('cookie');\n \n-    app = express();\n+app = express();\n \n process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';\n \n // var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';\n"
+                },
+                {
+                    "date": 1660026031669,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -109,9 +109,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/snowme_process\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": authorization, Accept: \"application/json\"\n+                        \"Authorization\": \"Bearer \" + authorization, Accept: \"application/json\"\n                     },\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
+                },
+                {
+                    "date": 1660028747022,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -122,9 +122,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n                 var image = req.body.dataBody.image;\n \n-                request.post({\n+                request({\n                     url: targetUrl, headers: {\n                         \"Content-Type\": \"multipart/form-data\",\n                         \"accept\": \"*/*\"\n                     }, \"formData\": {\n"
+                },
+                {
+                    "date": 1660028757055,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -123,9 +123,9 @@\n             } else if (ServiceUrl == \"/extends\") {\n                 var image = req.body.dataBody.image;\n \n                 request({\n-                    url: targetUrl, headers: {\n+                    url: targetUrl, json: req.body, headers: {\n                         \"Content-Type\": \"multipart/form-data\",\n                         \"accept\": \"*/*\"\n                     }, \"formData\": {\n                         image: (image || 'NA'),\n"
+                },
+                {
+                    "date": 1660028770373,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -109,9 +109,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/snowme_process\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization, Accept: \"application/json\"\n+                        \"Authorization\": \"Bearer \" + authorization\n                     },\n                 },\n                     function (error, response, body) {\n                         if (error) {\n@@ -124,12 +124,9 @@\n                 var image = req.body.dataBody.image;\n \n                 request({\n                     url: targetUrl, json: req.body, headers: {\n-                        \"Content-Type\": \"multipart/form-data\",\n-                        \"accept\": \"*/*\"\n-                    }, \"formData\": {\n-                        image: (image || 'NA'),\n+                        \"Authorization\": \"Bearer \" + authorization\n                     }\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
+                },
+                {
+                    "date": 1660028784788,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -123,9 +123,9 @@\n             } else if (ServiceUrl == \"/extends\") {\n                 var image = req.body.dataBody.image;\n \n                 request({\n-                    url: targetUrl, json: req.body, headers: {\n+                    url: targetUrl, method: req.method, json: req.body, headers: {\n                         \"Authorization\": \"Bearer \" + authorization\n                     }\n                 },\n                     function (error, response, body) {\n"
+                },
+                {
+                    "date": 1660029025121,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -83,8 +83,9 @@\n                 }).pipe(res);\n         } else if (ServiceType == \"AVATA\") {\n             console.log(\">>>>>>>>>> [ServiceUrl] : \" + ServiceUrl);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n \n             if (ServiceUrl == \"/authorize\") {\n                 var client_id = req.body.dataBody.client_id;\n                 var client_secret = req.body.dataBody.client_secret;\n"
+                },
+                {
+                    "date": 1660029393437,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -82,10 +82,10 @@\n                     }\n                 }).pipe(res);\n         } else if (ServiceType == \"AVATA\") {\n             console.log(\">>>>>>>>>> [ServiceUrl] : \" + ServiceUrl);\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n-            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n \n             if (ServiceUrl == \"/authorize\") {\n                 var client_id = req.body.dataBody.client_id;\n                 var client_secret = req.body.dataBody.client_secret;\n"
+                },
+                {
+                    "date": 1660029415842,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -121,10 +121,8 @@\n                             console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                         }\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n-                var image = req.body.dataBody.image;\n-\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n                         \"Authorization\": \"Bearer \" + authorization\n                     }\n"
                 }
             ],
             "date": 1649995788856,
