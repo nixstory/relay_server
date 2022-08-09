@@ -20,7 +20,7 @@ function getSessionId(response) {
     //     map: true,
     // });
     // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];
-    if ((response.headers != null) && (response.headers != undefined)) {
+    if ((response != null) && (response.headers != null) && (response.headers != undefined)) {
         const cookies = setCookie.parse(response.headers['set-cookie'], {
             decodeValues: true,
             map: true,

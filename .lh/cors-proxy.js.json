@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 403,
+            "activePatchIndex": 404,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -1620,6 +1620,10 @@
                 {
                     "date": 1660029415842,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -121,10 +121,8 @@\n                             console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                         }\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n-                var image = req.body.dataBody.image;\n-\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n                         \"Authorization\": \"Bearer \" + authorization\n                     }\n"
+                },
+                {
+                    "date": 1660032691945,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n     //     decodeValues: true,\n     //     map: true,\n     // });\n     // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n-    if ((response.headers != null) && (response.headers != undefined)) {\n+    if ((response != null) && (response.headers != null) && (response.headers != undefined)) {\n         const cookies = setCookie.parse(response.headers['set-cookie'], {\n             decodeValues: true,\n             map: true,\n         });\n"
                 }
             ],
             "date": 1649995788856,
