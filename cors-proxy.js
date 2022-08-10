@@ -124,7 +124,7 @@ app.all('*', function (req, res, next) {
             } else if (ServiceUrl == "/extends") {
                 request({
                     url: targetUrl, method: req.method, json: req.body, headers: {
-                        "Authorization": "Bearer " + authorization
+                        "Authorization": "Bearer " + authorization, "Content-Type": "multipart/form-data", "accept": "*/*"
                     }
                 },
                     function (error, response, body) {

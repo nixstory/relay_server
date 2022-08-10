@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 404,
+            "activePatchIndex": 411,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -1624,6 +1624,34 @@
                 {
                     "date": 1660032691945,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n     //     decodeValues: true,\n     //     map: true,\n     // });\n     // return cookies['JSESSIONID'] && cookies['JSESSIONID']['value'];\n-    if ((response.headers != null) && (response.headers != undefined)) {\n+    if ((response != null) && (response.headers != null) && (response.headers != undefined)) {\n         const cookies = setCookie.parse(response.headers['set-cookie'], {\n             decodeValues: true,\n             map: true,\n         });\n"
+                },
+                {
+                    "date": 1660126552203,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -110,9 +110,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/snowme_process\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization\n+                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"application/json\"\n                     },\n                 },\n                     function (error, response, body) {\n                         if (error) {\n@@ -123,9 +123,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization\n+                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"application/json\"\n                     }\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
+                },
+                {
+                    "date": 1660126626688,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -122,9 +122,9 @@\n                         }\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n                 request({\n-                    url: targetUrl, method: req.method, json: req.body, headers: {\n+                    url: targetUrl, method: \"POST\", json: req.body, headers: {\n                         \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"application/json\"\n                     }\n                 },\n                     function (error, response, body) {\n"
+                },
+                {
+                    "date": 1660126649396,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -122,9 +122,9 @@\n                         }\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n                 request({\n-                    url: targetUrl, method: \"POST\", json: req.body, headers: {\n+                    url: targetUrl, method: req.method, json: req.body, headers: {\n                         \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"application/json\"\n                     }\n                 },\n                     function (error, response, body) {\n"
+                },
+                {
+                    "date": 1660126800645,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -123,9 +123,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"application/json\"\n+                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"multipart/form-data\"\n                     }\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
+                },
+                {
+                    "date": 1660126807950,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -123,9 +123,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/extends\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"multipart/form-data\"\n+                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"multipart/form-data\", \"accept\": \"*/*\"\n                     }\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
+                },
+                {
+                    "date": 1660126833443,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -110,9 +110,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/snowme_process\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"application/json\"\n+                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"multipart/form-data\", \"accept\": \"*/*\"\n                     },\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
+                },
+                {
+                    "date": 1660126864009,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -110,9 +110,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/snowme_process\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"multipart/form-data\", \"accept\": \"*/*\"\n+                        \"Authorization\": \"Bearer \" + authorization\n                     },\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
                 }
             ],
             "date": 1649995788856,
