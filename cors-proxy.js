@@ -81,7 +81,7 @@ app.all('*', function (req, res, next) {
                         console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
                     }
                 }).pipe(res);
-        } else if (ServiceType == "AVATA") {
+        } else if ((ServiceType == "AVATA") || (ServiceType == "AVATAR")) {
             console.log(">>>>>>>>>> [ServiceUrl] : " + ServiceUrl);
             console.log(">>>>>>>>>> [authorization] : " + authorization);
             console.log(">>>>>>>>>> [req.body] : " + JSON.stringify(req.body));

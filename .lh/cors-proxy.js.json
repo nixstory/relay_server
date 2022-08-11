@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 411,
+            "activePatchIndex": 413,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -1652,6 +1652,14 @@
                 {
                     "date": 1660126864009,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -110,9 +110,9 @@\n                     }).pipe(res);\n             } else if (ServiceUrl == \"/snowme_process\") {\n                 request({\n                     url: targetUrl, method: req.method, json: req.body, headers: {\n-                        \"Authorization\": \"Bearer \" + authorization, \"Content-Type\": \"multipart/form-data\", \"accept\": \"*/*\"\n+                        \"Authorization\": \"Bearer \" + authorization\n                     },\n                 },\n                     function (error, response, body) {\n                         if (error) {\n"
+                },
+                {
+                    "date": 1660186214664,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -80,9 +80,9 @@\n                     } else {\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n-        } else if (ServiceType == \"AVATA\") {\n+        } else if (ServiceType == \"AVATAR\") {\n             console.log(\">>>>>>>>>> [ServiceUrl] : \" + ServiceUrl);\n             console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n"
+                },
+                {
+                    "date": 1660189938502,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -80,9 +80,9 @@\n                     } else {\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n-        } else if (ServiceType == \"AVATAR\") {\n+        } else if ((ServiceType == \"AVATA\") || (ServiceType == \"AVATAR\")) {\n             console.log(\">>>>>>>>>> [ServiceUrl] : \" + ServiceUrl);\n             console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n"
                 }
             ],
             "date": 1649995788856,
