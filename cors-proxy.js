@@ -61,6 +61,8 @@ app.all('*', function (req, res, next) {
         var authorization = req.header('authorization');
         var ServiceType = req.header('Service-Type');
         var ServiceUrl = req.header('Service-Url');
+        var channelCode = req.header('channel_code');
+        var channelToken = req.header('channel_token');
 
         if (!targetUrl) {
             res.send(500, { error: 'There is no Target-Endpoint header in the request' });
@@ -135,6 +137,19 @@ app.all('*', function (req, res, next) {
                         }
                     }).pipe(res);
             }
+        } else if (ServiceType == "GIFT") {
+            console.log(">>>>>>>>>> [channel_code] : " + channelCode);
+            console.log(">>>>>>>>>> [channel_token] : " + channelToken);
+            console.log(">>>>>>>>>> [req.body] : " + JSON.stringify(req.body));
+
+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },
+                function (error, response, body) {
+                    if (error) {
+                        console.error('error: ' + error)
+                    } else {
+                        console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                    }
+                }).pipe(res);
         } else {
             console.log(">>>>>>>>>> [TRXCD] : " + req.body.dataHeader.trxCd);
             console.log(">>>>>>>>>> [REQUEST/HEAD] : " + JSON.stringify(req.body.dataHeader, null, 4));

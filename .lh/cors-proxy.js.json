@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 413,
+            "activePatchIndex": 420,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -1660,6 +1660,34 @@
                 {
                     "date": 1660189938502,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -80,9 +80,9 @@\n                     } else {\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n-        } else if (ServiceType == \"AVATAR\") {\n+        } else if ((ServiceType == \"AVATA\") || (ServiceType == \"AVATAR\")) {\n             console.log(\">>>>>>>>>> [ServiceUrl] : \" + ServiceUrl);\n             console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n"
+                },
+                {
+                    "date": 1660637653653,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -134,8 +134,19 @@\n                             console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                         }\n                     }).pipe(res);\n             }\n+        } else if (ServiceType == \"DLS\") {\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n+\n+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n+                function (error, response, body) {\n+                    if (error) {\n+                        console.error('error: ' + error)\n+                    } else {\n+                        console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n+                    }\n+                }).pipe(res);\n         } else {\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n             console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n"
+                },
+                {
+                    "date": 1660637663306,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -134,10 +134,9 @@\n                             console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                         }\n                     }).pipe(res);\n             }\n-        } else if (ServiceType == \"DLS\") {\n-            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n+        } else if (ServiceType == \"GIFT\") {\n \n             request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n                 function (error, response, body) {\n                     if (error) {\n"
+                },
+                {
+                    "date": 1660637711468,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -60,8 +60,10 @@\n         var targetUrl = req.header('Target-URL'); // Target-URL ie. https://example.com or http://example.com\n         var authorization = req.header('authorization');\n         var ServiceType = req.header('Service-Type');\n         var ServiceUrl = req.header('Service-Url');\n+        var channelCode = req.header('channel_code');\n+        var channelToken = req.header('channel_token');\n \n         if (!targetUrl) {\n             res.send(500, { error: 'There is no Target-Endpoint header in the request' });\n             return;\n"
+                },
+                {
+                    "date": 1660637736714,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -138,9 +138,9 @@\n                     }).pipe(res);\n             }\n         } else if (ServiceType == \"GIFT\") {\n \n-            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n                 function (error, response, body) {\n                     if (error) {\n                         console.error('error: ' + error)\n                     } else {\n"
+                },
+                {
+                    "date": 1660637763837,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -137,8 +137,10 @@\n                         }\n                     }).pipe(res);\n             }\n         } else if (ServiceType == \"GIFT\") {\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n \n             request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n                 function (error, response, body) {\n                     if (error) {\n"
+                },
+                {
+                    "date": 1660637771643,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -137,10 +137,10 @@\n                         }\n                     }).pipe(res);\n             }\n         } else if (ServiceType == \"GIFT\") {\n-            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n-            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n+            console.log(\">>>>>>>>>> [channel_code] : \" + channelCode);\n+            console.log(\">>>>>>>>>> [channel_token] : \" + channelToken);\n \n             request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n                 function (error, response, body) {\n                     if (error) {\n"
+                },
+                {
+                    "date": 1660637819492,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -139,9 +139,11 @@\n             }\n         } else if (ServiceType == \"GIFT\") {\n             console.log(\">>>>>>>>>> [channel_code] : \" + channelCode);\n             console.log(\">>>>>>>>>> [channel_token] : \" + channelToken);\n+            console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n+\n             request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n                 function (error, response, body) {\n                     if (error) {\n                         console.error('error: ' + error)\n"
                 }
             ],
             "date": 1649995788856,
