@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 420,
+            "activePatchIndex": 425,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -1688,6 +1688,26 @@
                 {
                     "date": 1660637819492,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -139,9 +139,11 @@\n             }\n         } else if (ServiceType == \"GIFT\") {\n             console.log(\">>>>>>>>>> [channel_code] : \" + channelCode);\n             console.log(\">>>>>>>>>> [channel_token] : \" + channelToken);\n+            console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n+\n             request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n                 function (error, response, body) {\n                     if (error) {\n                         console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1662097544277,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -141,9 +141,8 @@\n             console.log(\">>>>>>>>>> [channel_code] : \" + channelCode);\n             console.log(\">>>>>>>>>> [channel_token] : \" + channelToken);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n-\n             request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n                 function (error, response, body) {\n                     if (error) {\n                         console.error('error: ' + error)\n"
+                },
+                {
+                    "date": 1662097557313,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -149,8 +149,9 @@\n                     } else {\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n+        } else if (ServiceType == \"COSMO\") {\n         } else {\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n             console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n"
+                },
+                {
+                    "date": 1662097565407,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -150,8 +150,10 @@\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n         } else if (ServiceType == \"COSMO\") {\n+            console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n+\n         } else {\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n             console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n"
+                },
+                {
+                    "date": 1662097609647,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -152,8 +152,16 @@\n                 }).pipe(res);\n         } else if (ServiceType == \"COSMO\") {\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n+                function (error, response, body) {\n+                    if (error) {\n+                        console.error('error: ' + error)\n+                    } else {\n+                        console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n+                    }\n+                }).pipe(res);\n         } else {\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n             console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n"
+                },
+                {
+                    "date": 1662101132038,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -150,11 +150,12 @@\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n         } else if (ServiceType == \"COSMO\") {\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n-            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n                 function (error, response, body) {\n                     if (error) {\n                         console.error('error: ' + error)\n                     } else {\n"
                 }
             ],
             "date": 1649995788856,
