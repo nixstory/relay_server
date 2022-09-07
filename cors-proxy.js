@@ -162,6 +162,17 @@ app.all('*', function (req, res, next) {
                         console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
                     }
                 }).pipe(res);
+        } else if (ServiceType == "GREEN") {
+            console.log(">>>>>>>>>> [req.body] : " + JSON.stringify(req.body));
+
+            request({ url: targetUrl, method: req.method, json: req.body },
+                function (error, response, body) {
+                    if (error) {
+                        console.error('error: ' + error)
+                    } else {
+                        console.log(">>>>>>>>>> [body] : " + JSON.stringify(body, null, 4));
+                    }
+                }).pipe(res);
         } else {
             console.log(">>>>>>>>>> [TRXCD] : " + req.body.dataHeader.trxCd);
             console.log(">>>>>>>>>> [REQUEST/HEAD] : " + JSON.stringify(req.body.dataHeader, null, 4));

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 425,
+            "activePatchIndex": 428,
             "patches": [
                 {
                     "date": 1649995788856,
@@ -1708,6 +1708,18 @@
                 {
                     "date": 1662101132038,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -150,11 +150,12 @@\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n         } else if (ServiceType == \"COSMO\") {\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n-            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization, 'channel_code': channelCode, 'channel_token': channelToken }, },\n+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n                 function (error, response, body) {\n                     if (error) {\n                         console.error('error: ' + error)\n                     } else {\n"
+                },
+                {
+                    "date": 1662538159937,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -161,8 +161,20 @@\n                     } else {\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n+        } else if (ServiceType == \"COSMO\") {\n+            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n+            console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n+\n+            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n+                function (error, response, body) {\n+                    if (error) {\n+                        console.error('error: ' + error)\n+                    } else {\n+                        console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n+                    }\n+                }).pipe(res);\n         } else {\n             console.log(\">>>>>>>>>> [TRXCD] : \" + req.body.dataHeader.trxCd);\n             console.log(\">>>>>>>>>> [REQUEST/HEAD] : \" + JSON.stringify(req.body.dataHeader, null, 4));\n             console.log(\">>>>>>>>>> [REQUEST/BODY] : \" + JSON.stringify(req.body.dataBody, null, 4));\n"
+                },
+                {
+                    "date": 1662538167227,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -161,10 +161,9 @@\n                     } else {\n                         console.log(\">>>>>>>>>> [body] : \" + JSON.stringify(body, null, 4));\n                     }\n                 }).pipe(res);\n-        } else if (ServiceType == \"COSMO\") {\n-            console.log(\">>>>>>>>>> [authorization] : \" + authorization);\n+        } else if (ServiceType == \"GREEN\") {\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n             request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n                 function (error, response, body) {\n"
+                },
+                {
+                    "date": 1662538175320,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -164,9 +164,9 @@\n                 }).pipe(res);\n         } else if (ServiceType == \"GREEN\") {\n             console.log(\">>>>>>>>>> [req.body] : \" + JSON.stringify(req.body));\n \n-            request({ url: targetUrl, method: req.method, json: req.body, headers: { 'authorization': authorization }, },\n+            request({ url: targetUrl, method: req.method, json: req.body },\n                 function (error, response, body) {\n                     if (error) {\n                         console.error('error: ' + error)\n                     } else {\n"
                 }
             ],
             "date": 1649995788856,
